@@ -1,0 +1,57 @@
+version: '3.8'
+services:
+  n1:
+    build: ../..
+    command: ["run", "-id", "n1", "-raft-addr", ":9521", "-mem-bind", ":7946", "-mgmt-addr", ":17946", "-bootstrap", "-data", "/data"]
+    ports:
+      - "17946:17946"   # mgmt/status/metrics
+    networks: [cluster]
+    volumes:
+      - n1data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:17946/healthz || exit 1"]
+      interval: 3s
+      timeout: 2s
+      retries: 10
+    restart: unless-stopped
+
+  n2:
+    build: ../..
+    command: ["run", "-id", "n2", "-raft-addr", ":9522", "-mem-bind", ":7946", "-mgmt-addr", ":18946", "-join", "n1:7946", "-data", "/data"]
+    ports:
+      - "18946:18946"
+    networks: [cluster]
+    volumes:
+      - n2data:/data
+    depends_on:
+      n1:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:18946/healthz || exit 1"]
+      interval: 3s
+      timeout: 2s
+      retries: 10
+    restart: unless-stopped
+
+  n3:
+    build: ../..
+    command: ["run", "-id", "n3", "-raft-addr", ":9523", "-mem-bind", ":7946", "-mgmt-addr", ":19946", "-join", "n1:7946", "-data", "/data"]
+    ports:
+      - "19946:19946"
+    networks: [cluster]
+    volumes:
+      - n3data:/data
+    depends_on:
+      n1:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:19946/healthz || exit 1"]
+    restart: unless-stopped
+
+networks:
+  cluster: {}
+
+volumes:
+  n1data: {}
+  n2data: {}
+  n3data: {}

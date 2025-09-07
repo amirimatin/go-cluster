@@ -1,0 +1,16 @@
+# Binaries
+/bin/
+/dist/
+/build/
+
+# IDE
+.idea/
+.vscode/
+
+
+# Ignore product development docs for releases
+DEVELOPMENT_PLAN.md
+go-cluster.md
+MILESTONES.md
+go-cluster.md
+agent-memory.md

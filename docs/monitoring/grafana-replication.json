@@ -1,0 +1,34 @@
+{
+  "title": "go-cluster Replication",
+  "schemaVersion": 38,
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Active Subscribers",
+      "gridPos": {"x": 0, "y": 0, "w": 6, "h": 4},
+      "targets": [{"expr": "go_cluster_repl_subs"}]
+    },
+    {
+      "type": "graph",
+      "title": "Publish/Broadcast Rate",
+      "gridPos": {"x": 6, "y": 0, "w": 18, "h": 8},
+      "targets": [
+        {"expr": "sum by (topic) (rate(go_cluster_repl_published_total[5m]))", "legendFormat": "pub {{topic}}"},
+        {"expr": "sum by (topic) (rate(go_cluster_repl_broadcast_total[5m]))", "legendFormat": "bcast {{topic}}"}
+      ]
+    },
+    {
+      "type": "graph",
+      "title": "Topic Lag",
+      "gridPos": {"x": 0, "y": 8, "w": 12, "h": 8},
+      "targets": [{"expr": "go_cluster_repl_lag", "legendFormat": "{{topic}}"}]
+    },
+    {
+      "type": "graph",
+      "title": "Per-node Lag",
+      "gridPos": {"x": 12, "y": 8, "w": 12, "h": 8},
+      "targets": [{"expr": "go_cluster_repl_lag_per_node", "legendFormat": "{{topic}}/{{node}}"}]
+    }
+  ]
+}
+
